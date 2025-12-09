@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Countdown</title>
+<style>
+    body {
+        background-color: #121212;
+        color: #e0e0e0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+    input {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+        border: 1px solid #333;
+        padding: 5px 10px;
+        font-size: 16px;
+        text-align: center;
+        margin-top: 4px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+    button {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background 0.3s;
+    }
+    button:hover {
+        background-color: #555;
+    }
+    h2 {
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+<body>
+    <h2 id="countdownDisplay"></h2>
+
+    Startzeit <input id="start" value="08:00"><br><br>
+    Dauer <input id="duration" value="08:30"><br><br>
+
+    <button id="startBtn" onclick="startCountdown()">Start</button>
+
+    <script>
+        const display = document.getElementById("countdownDisplay");
+        let stT =  "\u2705  --:--:--";
+        display.textContent = stT;
+        document.title = stT;
+
+        function pad(n) {
+            return String(n).padStart(2, "0");
+        }
+
+        function setCurrentTimeAsDefault() {
+            let now = new Date();
+            let hh = pad(now.getHours());
+            let mm = pad(now.getMinutes());
+            document.getElementById("start").value = `${hh}:${mm}`;
+        }
+
+        setCurrentTimeAsDefault();
+
+
+        function toMinutes(hhmm) {
+            let [h, m] = hhmm.split(":").map(Number);
+            return h * 60 + m;
+        }
+
+        function formatTime(totalSeconds) {
+            let hrs = Math.floor(totalSeconds / 3600);
+            let mins = Math.floor((totalSeconds % 3600) / 60);
+            let secs = totalSeconds % 60;
+
+            return `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+        }
+
+        let intervalId;
+
+        function startInterval(durationInSeconds) {
+            clearInterval(intervalId); // alten Timer stoppen
+
+            let remaining = durationInSeconds;
+
+            intervalId = setInterval(() => {
+                if (remaining < 0) {
+                    let titleEnd = "\u2705 FERTIG!";
+                    document.title = titleEnd;
+                    display.textContent = titleEnd;
+                    clearInterval(intervalId);
+                    return;
+                }
+
+                let countdownTitle = "\u23F3  " + formatTime(remaining) + "  ";
+                document.title = countdownTitle;
+                display.textContent = countdownTitle;
+                remaining--;
+            }, 1000);
+        }
+
+        function startCountdown() {
+            let start = document.getElementById("start").value;
+            let duration = document.getElementById("duration").value;
+
+            if (!start) {
+                setCurrentTimeAsDefault();
+                start = document.getElementById("start").value;
+            }
+
+            let startMin = toMinutes(start);
+            let durationMin = toMinutes(duration);
+
+            let endMin = startMin + durationMin;
+
+            let now = new Date();
+            let currentMin = now.getHours() * 60 + now.getMinutes();
+            let currentSec = now.getSeconds();
+
+            let endTimeSeconds = endMin * 60;
+            let nowSeconds = currentMin * 60 + currentSec;
+
+            let remainingSeconds = endTimeSeconds - nowSeconds;
+
+            if (remainingSeconds < 0) {
+                alert("Die Endzeit liegt in der Vergangenheit.");
+                return;
+            }
+
+            startInterval(remainingSeconds);
+        }
+
+
+        document.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+                document.getElementById("startBtn").click();
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>
