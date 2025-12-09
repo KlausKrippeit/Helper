@@ -34,7 +34,7 @@ try {
     // Startzeit: heute mit den angegebenen Stunden/Minuten
     $startTodayStr = $now->format('Y-m-d') . sprintf(" %02d:%02d:00", $sh, $sm);
     $start = new DateTimeImmutable($startTodayStr, new DateTimeZone('Europe/Berlin'));
-  
+
     // Wenn Start in der Vergangenheit -> nächsten Tag
     //if ($start <= $now) {
     //    $start = $start->add(new DateInterval('P1D'));
@@ -49,9 +49,9 @@ try {
 
     // Ausgabe
     echo "Zeitzone: Europe/Berlin\n";
-    echo "Aktuell:  " . $now->format('Y-m-d H:i:s') . "\n";
-    echo "Start:    " . $start->format('Y-m-d H:i:s') . "\n";
-    echo "Ziel:     " . $target->format('Y-m-d H:i:s') . "\n\n";
+    echo "Aktuell:  " . $now->format('H:i:s') . "\n";
+    echo "Start:    " . $start->format('H:i:s') . "\n";
+    echo "Ziel:     " . $target->format('H:i:s') . "\n\n";
 
     // Falls Start in Zukunft: warten (mit Anzeige)
     $now2 = new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin'));
@@ -67,12 +67,12 @@ try {
             $m = intdiv($remaining % 3600, 60);
             $s = $remaining % 60;
             printf("\rBis Start verbleibend: %02d:%02d:%02d ", $h, $m, $s);
-           fflush(STDOUT);
+            fflush(STDOUT);
             sleep(1);
-        }
+ }
         echo "\nStartzeit erreicht. Countdown startet...\n";
     } else {
-        echo "Startzeit ist jetzt. Countdown startet...\n";
+        echo "\n";
     }
 
     // Countdown bis Ziel
@@ -85,7 +85,10 @@ try {
         $h = intdiv($remaining, 3600);
         $m = intdiv($remaining % 3600, 60);
         $s = $remaining % 60;
-        printf("\rVerbleibend: %02d:%02d:%02d ", $h, $m, $s);
+
+        $timeS = $now3->format('H:i:s');
+        printf("\rTime: %s: Counter: %02d:%02d:%02d ", $timeS, $h, $m, $s);
+
         fflush(STDOUT);
         sleep(1);
     }
@@ -97,3 +100,4 @@ try {
     fwrite(STDERR, "Fehler: " . $e->getMessage() . "\n");
     exit(1);
 }
+    
